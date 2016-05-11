@@ -5,7 +5,7 @@ export default Ember.Service.extend(AdapterAjaxMixin, {
   store: Ember.inject.service(),
   user: Ember.inject.service(),
 
-  record: null,
+  record: null, // Ember Data record (for dirty checking, attribute transforms, and other Model benefits)
 
   load() {
     let user = this.get('user.record');
@@ -64,9 +64,9 @@ export default Ember.Service.extend(AdapterAjaxMixin, {
       .then((response) => {
         // response returns no data.
         // assume server persisted all properties and clear dirty flags on model by reloading record.
-        var normalizedOrder = this.get('store').normalize('order', activeOrder.serialize()); // normalize to JSON API document for .push()
+        var normalizedOrder = this.get('store').normalize('order', activeOrder.serialize());
         this.get('store').unloadRecord(activeOrder);
-        this.set('record', this.get('store').push(normalizedOrder)); // save reference to record
+        this.set('record', this.get('store').push(normalizedOrder));
         return this.get('record');
 
       }, (e) => {
@@ -77,7 +77,10 @@ export default Ember.Service.extend(AdapterAjaxMixin, {
   },
 
   confirm() {
-    // TODO: ajax
+    let activeOrder = this.get('record');
+    if (!activeOrder) return Ember.RSVP.reject({message: 'must load active order before confirming'});
+
+    return this.get('ajax')(`orders/${activeOrder.id}/confirm`, 'POST');
   }
 
 });

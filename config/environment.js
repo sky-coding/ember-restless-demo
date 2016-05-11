@@ -2,7 +2,7 @@
 
 module.exports = function(environment) {
   var ENV = {
-    modulePrefix: 'ember-service',
+    modulePrefix: 'ember-restless-demo',
     environment: environment,
     baseURL: '/',
     locationType: 'auto',

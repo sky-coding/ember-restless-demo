@@ -70,10 +70,20 @@ export default Ember.Controller.extend({
       this.set('loading', true);
       this.set('message', null);
 
-      // TODO: also refresh user
+      return this.get('user').load()
+        .catch((e) => {
+          this.set('message', 'User refresh failed.');
+          return Ember.RSVP.reject(e);
+        })
 
-      return this.get('activeOrder').load()
-        .catch((e) => { this.set('message', 'Refresh failed.'); } )
+        .then(() => {
+          return this.get('activeOrder').load()
+            .catch((e) => {
+              this.set('message', 'User refresh succeeded but order refresh failed.');
+              return Ember.RSVP.reject(e);
+            });
+        }, (e) => { return Ember.RSVP.reject(e); })
+
         .finally(() => {
           this.set('loading', false);
         });
@@ -90,14 +100,14 @@ export default Ember.Controller.extend({
             .then(() => {
               this.set('loading', false);
             }, (e) => {
-              console.log(e);
               this.set('message', 'Update succeeded but order refresh failed. Please refresh manually to verify.');
-              this.set('loading', false);
-            })
+              this.set('loading', false)
+              return Ember.RSVP.reject(e);
+            });
         }, (e) => {
-          console.log(e);
           this.set('message', 'Update failed.');
           this.set('loading', false);
+          return Ember.RSVP.reject(e);
         });
     },
 
@@ -109,24 +119,24 @@ export default Ember.Controller.extend({
       return this.get('activeOrder').confirm()
         .catch((e) => {
           this.set('message', 'Confirm failed.');
-          return Ember.RSVP.reject();
-        })
-
-        .then(() => {
-          return this.get('activeOrder').load()
-            .catch((e) => {
-              this.set('message', 'Confirm succeeded but order refresh failed. Please refresh manually to verify.');
-              return Ember.RSVP.reject(e);
-            });
+          return Ember.RSVP.reject(e);
         })
 
         .then(() => {
           return this.get('user').load()
             .catch((e) => {
-              this.set('message', 'Confirm and order refresh succeeded, but user refresh failed. Please refresh manually to verify.');
+              this.set('message', 'Confirm succeeded, but user refresh failed. Please refresh manually to verify.');
               return Ember.RSVP.reject(e);
             });
-        })
+        }, (e) => { return Ember.RSVP.reject(e); })
+
+        .then(() => {
+          return this.get('activeOrder').load()
+            .catch((e) => {
+              this.set('message', 'Confirm and user refresh succeeded, but order refresh failed. Please refresh manually to verify.');
+              return Ember.RSVP.reject(e);
+            });
+        }, (e) => { return Ember.RSVP.reject(e); })
 
         .finally(() => {
           this.set('loading', false);

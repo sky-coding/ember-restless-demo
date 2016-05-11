@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import AdapterAjaxMixin from 'ember-service/mixins/adapter-ajax';
+import AdapterAjaxMixin from 'ember-restless-demo/mixins/adapter-ajax';
 import { module, test } from 'qunit';
 
 module('Unit | Mixin | adapter ajax');
