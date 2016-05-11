@@ -23,30 +23,34 @@ export default Ember.Controller.extend({
       if (this.get('loading')) return;
       this.set('loading', true);
       this.set('message', null);
-
-      let fail = (error, message) => {
-        if (error && error.message) console.warn(error.message);
-        if (message) this.set('message', message);
-        return Ember.RSVP.reject();
-      };
-
+      
+      // login
       this.get('authentication').login(this.get('credentials'))
-        .catch((e) => { return fail(e, 'Authentication failed. Please try again.'); })
+        .catch((e) => {
+          this.set('message', 'Authentication failed. Please try again.');
+          return Ember.RSVP.reject(e);
+        })
 
+        // load user
         .then(() => {
           return this.get('user').load()
             .catch((e) => {
               this.get('authentication').logout();
-              return fail(e, 'Authentication succeeded but failed loading user. Please try again.');
+              
+              this.set('message', 'Authentication succeeded but failed loading user. Please try again.');
+              return Ember.RSVP.reject(e);
             });
         })
 
+        // load active order
         .then(() => {
           return this.get('activeOrder').load()
             .catch((e) => {
               this.get('user').unload();
               this.get('authentication').logout();
-              return fail(e, 'Authentication succeeded but failed loading active order. Please try again.');
+
+              this.set('message', 'Authentication succeeded but failed loading active order. Please try again.');
+              return Ember.RSVP.reject(e);
             });
         })
 
@@ -101,7 +105,7 @@ export default Ember.Controller.extend({
               this.set('loading', false);
             }, (e) => {
               this.set('message', 'Update succeeded but order refresh failed. Please refresh manually to verify.');
-              this.set('loading', false)
+              this.set('loading', false);
               return Ember.RSVP.reject(e);
             });
         }, (e) => {
