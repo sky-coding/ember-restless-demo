@@ -1,0 +1,81 @@
+{{#if message}}
+    <div class="alert alert-info" role="alert">{{message}}</div>
+{{/if}}
+
+<div class="row login-status">
+  {{#if authentication.loggedIn}}
+    <div class="col-xs-8 text-center">You are logged in!</div>
+    <div class="col-xs-4 text-right">
+        <button class="btn btn-info" {{action 'logout'}} disabled={{loading}}>Logout</button>
+    </div>
+  {{else}}
+      <div class="col-xs-12 text-center">You are NOT logged in!</div>
+  {{/if}}
+</div>
+
+{{#unless authentication.loggedIn}}
+    <div class="login">
+      {{input value=credentials.username placeholder="Username" class="form-control"}}
+      {{input value=credentials.password placeholder="Password" class="form-control"}}
+        <button class="btn btn-default" {{action 'login'}} disabled={{loading}}>Login</button>
+    </div>
+{{/unless}}
+
+
+{{#if activeOrder.record}}
+    <hr>
+
+    <div class="order">
+        <h4 class="text-center">Order</h4>
+
+        <div class="order-details">
+            <div class="row">
+                <div class="col-xs-2 title text-right">Id:</div>
+                <div class="col-xs-8 val">{{activeOrder.record.id}}</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-2 title text-right">Item:</div>
+                <div class="col-xs-8">{{input class="form-control" value=activeOrder.record.item disabled=loading}}</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-2 title text-right">Quantity:</div>
+                <div class="col-xs-8">{{input class="form-control" value=activeOrder.record.quantity disabled=loading}}</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-2 title text-right">Price:</div>
+                <div class="col-xs-8">{{input class="form-control" value=activeOrder.record.price disabled=loading}}</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-2 title text-right">Status:</div>
+                <div class="col-xs-8 val">{{activeOrder.record.status}}</div>
+            </div>
+
+          {{#if activeOrder.record.hasDirtyAttributes}}
+              <div class="row">
+                  <div class="col-xs-12 text-center"><span style="font-size: 12px; font-weight: bold;">Dirty</span>
+                  </div>
+              </div>
+          {{/if}}
+
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-primary" {{action 'update'}} disabled={{updateButtonDisabled}}>Update Order Details</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-default" {{action 'refresh'}} disabled={{loading}}>Refresh Order Details</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-danger" {{action 'confirm'}} disabled={{loading}}>Confirm Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{{/if}}
+
+{{#if loading}}
+  <div class="loading">Loading</div>
+{{/if}}

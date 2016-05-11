@@ -1,0 +1,25 @@
+body {
+  padding: 45px;
+}
+
+.login-status, .login, .order {
+  margin: 10px 0;
+}
+
+.login input {
+  margin-bottom: 5px;
+}
+
+.order-details .row {
+  margin-bottom: 10px;
+}
+
+.order-details .title, .order-details .val {
+  line-height: 34px;
+}
+
+.loading {
+  padding: 50px 0 0;
+  font-size: 30px;
+  text-align: center;
+}
