@@ -10,7 +10,8 @@ export default Ember.Service.extend(AdapterAjaxMixin, {
       // no need for Ember Data here
       var user = Ember.Object.create({
         id: response.data.id,
-        username: response.data.username
+        username: response.data.username,
+        ordersConfirmed: response.data.ordersConfirmed
       });
 
       this.set('record', user);

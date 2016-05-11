@@ -74,6 +74,10 @@ export default Ember.Service.extend(AdapterAjaxMixin, {
       })
 
       ;
+  },
+
+  confirm() {
+    // TODO: ajax
   }
 
 });

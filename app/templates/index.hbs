@@ -49,6 +49,10 @@
                 <div class="col-xs-2 title text-right">Status:</div>
                 <div class="col-xs-8 val">{{activeOrder.record.status}}</div>
             </div>
+            <div class="row">
+                <div class="col-xs-2 title text-right">Orders:</div>
+                <div class="col-xs-8 val">{{user.record.ordersConfirmed}}</div>
+            </div>
 
           {{#if activeOrder.record.hasDirtyAttributes}}
               <div class="row">

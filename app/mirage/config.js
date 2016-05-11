@@ -94,12 +94,7 @@ export default function () {
     order.quantity = data.quantity;
     order.price = data.price;
 
-    // db['users'].update(user, {
-    //   item: data.item,
-    //   quantity: data.quantity,
-    //   price: data.price
-    // });
-
+    db['users'].update(user, user);
   });
 
   this.post('orders/:id/confirm', function (db, request) {
@@ -116,15 +111,9 @@ export default function () {
 
     order.status = 'confirmed';
 
-    // db['users'].update(user, {
-    //   status: 'confirmed'
-    // });
-
-    // db['users'].update(user, {
-    //   status: 'confirmed'
-    // });
-
     user.ordersConfirmed++;
+
+    db['users'].update(user, user);
   });
 
 

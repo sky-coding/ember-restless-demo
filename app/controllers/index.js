@@ -70,6 +70,8 @@ export default Ember.Controller.extend({
       this.set('loading', true);
       this.set('message', null);
 
+      // TODO: also refresh user
+
       return this.get('activeOrder').load()
         .catch((e) => { this.set('message', 'Refresh failed.'); } )
         .finally(() => {
@@ -86,22 +88,49 @@ export default Ember.Controller.extend({
         .then(() => {
           this.get('activeOrder').load()
             .then(() => {
-              console.log('refresh finished!');
               this.set('loading', false);
             }, (e) => {
               console.log(e);
-              this.set('message', 'Update succeeded but refresh failed. Please refresh manually to verify.');
+              this.set('message', 'Update succeeded but order refresh failed. Please refresh manually to verify.');
               this.set('loading', false);
             })
         }, (e) => {
           console.log(e);
           this.set('message', 'Update failed.');
           this.set('loading', false);
-        })
+        });
     },
 
     confirm() {
+      if (this.get('loading')) return;
+      this.set('loading', true);
+      this.set('message', null);
 
+      return this.get('activeOrder').confirm()
+        .catch((e) => {
+          this.set('message', 'Confirm failed.');
+          return Ember.RSVP.reject();
+        })
+
+        .then(() => {
+          return this.get('activeOrder').load()
+            .catch((e) => {
+              this.set('message', 'Confirm succeeded but order refresh failed. Please refresh manually to verify.');
+              return Ember.RSVP.reject(e);
+            });
+        })
+
+        .then(() => {
+          return this.get('user').load()
+            .catch((e) => {
+              this.set('message', 'Confirm and order refresh succeeded, but user refresh failed. Please refresh manually to verify.');
+              return Ember.RSVP.reject(e);
+            });
+        })
+
+        .finally(() => {
+          this.set('loading', false);
+        });
     }
   }
 
